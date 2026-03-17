@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { query } from "@/lib/agent";
 import { useChatStore } from "@/lib/store";
-import { ArrowUp, Loader2 } from "lucide-react";
+import { ArrowUp, Loader } from "lucide-react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import { ModelConfig } from "./components/model-config";
 import { ShimmerText } from "./components/shimmer-text";
 import { VisualWidget } from "./components/visual-widget";
 
@@ -30,7 +32,7 @@ export default function App() {
 
   return (
     <main className="min-h-screen bg-card">
-      <nav className="h-16 w-full fixed top-0 left-0 bg-card/60 backdrop-blur-2xl z-50">
+      <nav className="h-14 w-full fixed top-0 left-0 bg-card/60 backdrop-blur-2xl z-50">
         <div className="flex items-center justify-between px-4 h-full max-w-3xl mx-auto">
           <div className="flex items-center gap-2">
             <img src="/logo.svg" className="size-8 hover:animate-spin" />
@@ -60,7 +62,8 @@ export default function App() {
             className="border-0 bg-transparent dark:bg-transparent shadow-none focus-visible:ring-0 resize-none"
             placeholder="How can I help you?"
           />
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-between">
+            <ModelConfig />
             <Button
               size={"icon"}
               disabled={input.length === 0}
@@ -138,7 +141,7 @@ export default function App() {
                       <>
                         {block.isLoading ? (
                           <div className="w-full h-14 p-4 rounded-lg bg-muted flex items-center gap-2">
-                            <Loader2 className="animate-spin w-5 h-5" />
+                            <Loader className="animate-spin w-5 h-5" />
                             <ShimmerText text="Creating a visual to make this clearer" />
                           </div>
                         ) : (
@@ -156,6 +159,7 @@ export default function App() {
           </>
         ))}
       </div>
+      <Toaster position="top-center" />
     </main>
   );
 }

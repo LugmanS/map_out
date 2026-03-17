@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type Message = {
   id: string;
@@ -153,3 +154,35 @@ export const useChatStore = create<ChatStore>((set) => ({
     });
   },
 }));
+
+type ModelConfig = {
+  baseURL: string;
+  apiKey: string;
+  modelId: string;
+};
+
+type ModelStore = {
+  config: ModelConfig;
+  setConfig: (config: ModelConfig) => void;
+};
+
+export const useModelStore = create<ModelStore>()(
+  persist(
+    (set) => ({
+      config: {
+        baseURL: "https://api.openai.com/v1",
+        apiKey: "",
+        modelId: "gpt-5.2",
+      },
+      setConfig: (config) => {
+        set({ config });
+      },
+    }),
+    {
+      name: "model-config-storage",
+      partialize: (state) => ({
+        config: state.config,
+      }),
+    },
+  ),
+);

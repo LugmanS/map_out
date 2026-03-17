@@ -3,17 +3,15 @@ import type {
   ChatCompletionMessageParam,
   ChatCompletionTool,
 } from "openai/resources/chat";
-import { useChatStore } from "./store";
-
-//dev-time creds
-const config = { baseURL: "", apiKey: "", dangerouslyAllowBrowser: true };
+import { renderVisualDescription, systemPrompt } from "./instructions";
+import { useChatStore, useModelStore } from "./store";
 
 const tools: ChatCompletionTool[] = [
   {
     type: "function",
     function: {
-      name: "show_visual_widget",
-      description: "",
+      name: "render_visual",
+      description: renderVisualDescription,
       parameters: {
         type: "object",
         properties: { code: { type: "string", description: "HTML code" } },
@@ -25,16 +23,23 @@ const tools: ChatCompletionTool[] = [
 
 export async function query(query: string, currentMsgId: string) {
   const chatStore = useChatStore.getState();
-  const ai = new OpenAI(config);
+  const modelStore = useModelStore.getState();
+
+  const ai = new OpenAI({
+    baseURL: modelStore.config.baseURL,
+    apiKey: modelStore.config.apiKey,
+    dangerouslyAllowBrowser: true,
+  });
 
   const context: ChatCompletionMessageParam[] = [
+    { role: "system", content: systemPrompt },
     { role: "user", content: query },
   ];
 
   try {
     while (true) {
       const res = await ai.chat.completions.create({
-        model: "",
+        model: modelStore.config.modelId,
         messages: context,
         tools,
         stream: true,
@@ -58,7 +63,7 @@ export async function query(query: string, currentMsgId: string) {
             if (tc.id) toolCalls[idx].id = tc.id;
             if (tc.function?.name) {
               toolCalls[idx].name = tc.function.name;
-              if (tc.function.name === "show_visual_widget") {
+              if (tc.function.name === "render_visual") {
                 chatStore.appendWidgetBlock(currentMsgId, tc.id || "");
               }
             }
@@ -87,7 +92,7 @@ export async function query(query: string, currentMsgId: string) {
       });
 
       for (const tc of toolCallList) {
-        if (tc.name === "show_visual_widget") {
+        if (tc.name === "render_visual") {
           const parsed = JSON.parse(tc.arguments);
           const code = parsed.code as string;
           chatStore.updateWidgetBlock(currentMsgId, tc.id, code);
