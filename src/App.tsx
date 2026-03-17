@@ -7,8 +7,8 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
-import { VisualWidget } from "./components/visual-widget";
 import { ShimmerText } from "./components/shimmer-text";
+import { VisualWidget } from "./components/visual-widget";
 
 const staterPrompts = [
   "Show me how compound interest works",
@@ -72,7 +72,7 @@ export default function App() {
         </div>
       </div>
       <div
-        className={`pt-20 pb-32 max-w-3xl mx-auto px-4 space-y-4 ${
+        className={`pt-20 pb-44 max-w-3xl mx-auto px-4 space-y-8 ${
           Object.values(messages).length === 0
             ? "flex flex-col min-h-screen"
             : ""
@@ -117,8 +117,7 @@ export default function App() {
               <div className="max-w-3xl w-full space-y-4">
                 {message.isLoading && (
                   <div className="flex items-center gap-1.5">
-                    {/* <SpinnerIcon className="animate-spin w-5 h-5" /> */}
-                    <ShimmerText text={message.annotation || "Thinking..."} />
+                    <ShimmerText text={message.annotation || "Initializing"} />
                   </div>
                 )}
                 {message.content.map((block, index) => (
