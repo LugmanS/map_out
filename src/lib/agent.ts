@@ -35,13 +35,15 @@ export async function query(query: string, currentMsgId: string) {
     dangerouslyAllowBrowser: true,
   });
 
-  const context: ChatCompletionMessageParam[] = [
-    { role: "system", content: systemPrompt },
-    { role: "user", content: query },
-  ];
+  if (chatStore.context.length === 0) {
+    chatStore.pushContext({ role: "system", content: systemPrompt });
+  }
+
+  chatStore.pushContext({ role: "user", content: query });
 
   try {
     while (true) {
+      const context = useChatStore.getState().context;
       const res = await ai.chat.completions.create({
         model: modelStore.config.modelId,
         messages: context,
@@ -80,12 +82,12 @@ export async function query(query: string, currentMsgId: string) {
       const toolCallList = Object.values(toolCalls);
 
       if (toolCallList.length === 0) {
-        context.push({ role: "assistant", content: textContent });
+        chatStore.pushContext({ role: "assistant", content: textContent });
         chatStore.setMessageLoading(currentMsgId, false);
         break;
       }
 
-      context.push({
+      chatStore.pushContext({
         role: "assistant",
         content: textContent,
         tool_calls: toolCallList.map((tc) => ({
@@ -95,24 +97,26 @@ export async function query(query: string, currentMsgId: string) {
         })),
       });
 
+      const toolResults: ChatCompletionMessageParam[] = [];
       for (const tc of toolCallList) {
         if (tc.name === "render_visual") {
           const parsed = JSON.parse(tc.arguments);
           const code = parsed.code as string;
           chatStore.updateWidgetBlock(currentMsgId, tc.id, code);
-          context.push({
+          toolResults.push({
             role: "tool",
             tool_call_id: tc.id,
             content: renderVisualOutput,
           });
         } else {
-          context.push({
+          toolResults.push({
             role: "tool",
             tool_call_id: tc.id,
             content: "Invalid tool call.",
           });
         }
       }
+      chatStore.pushContext(...toolResults);
     }
   } catch (error) {
     console.error(error);

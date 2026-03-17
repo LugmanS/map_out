@@ -15,8 +15,11 @@ type Message = {
   isLoading: boolean;
 };
 
+type ContextMessage = import("openai/resources/chat").ChatCompletionMessageParam;
+
 type ChatStore = {
   messages: Record<string, Message>;
+  context: ContextMessage[];
   addChatMessage: (query: string) => string;
   appendTextDelta: (id: string, content: string) => void;
   appendWidgetBlock: (messageId: string, refId: string) => void;
@@ -26,10 +29,12 @@ type ChatStore = {
     content: string,
   ) => void;
   setMessageLoading: (messageId: string, isLoading: boolean) => void;
+  pushContext: (...messages: ContextMessage[]) => void;
 };
 
 export const useChatStore = create<ChatStore>((set) => ({
   messages: {},
+  context: [],
   addChatMessage: (query: string) => {
     const userMsgId = nanoid();
     const asstMsgId = nanoid();
@@ -152,6 +157,11 @@ export const useChatStore = create<ChatStore>((set) => ({
         },
       };
     });
+  },
+  pushContext: (...messages) => {
+    set((state) => ({
+      context: [...state.context, ...messages],
+    }));
   },
 }));
 
