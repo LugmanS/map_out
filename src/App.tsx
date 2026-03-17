@@ -1,13 +1,17 @@
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { query } from "@/lib/agent";
+import { useChatStore } from "@/lib/store";
 import { ArrowUp } from "lucide-react";
 import { useState } from "react";
-import { Button } from "./components/ui/button";
-import { Textarea } from "./components/ui/textarea";
 
 export default function App() {
+  const { addChatMessage } = useChatStore();
   const [input, setInput] = useState("");
 
   function sendMessage() {
-    console.log(input);
+    const msgId = addChatMessage(input);
+    query(input, msgId);
     setInput("");
   }
 
@@ -22,9 +26,7 @@ export default function App() {
               <p className="text-xs text-muted-foreground">by Madhi AI</p>
             </div>
           </div>
-          <Button variant={"secondary"} size={"sm"}>
-            New chat
-          </Button>
+          <Button variant={"secondary"}>New Chat</Button>
         </div>
       </nav>
       <div className="max-w-3xl w-full mx-auto fixed bottom-0 bg-card left-1/2 transform translate-x-[-50%] z-50 pb-3.5">
