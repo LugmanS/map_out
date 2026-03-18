@@ -8,10 +8,10 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 import { ModelConfig } from "./components/model-config";
 import { ShimmerText } from "./components/shimmer-text";
 import { VisualWidget } from "./components/visual-widget";
-import { toast } from "sonner";
 
 const staterPrompts = [
   "How compound interest works?",
@@ -27,6 +27,8 @@ export default function App() {
     if (customInput) userMsg = customInput;
 
     const msgId = addChatMessage(userMsg);
+    setInput("");
+
     try {
       await query(userMsg, msgId);
     } catch (e) {
@@ -40,7 +42,6 @@ export default function App() {
         classNames: { content: "flex flex-col gap-2" },
       });
     }
-    setInput("");
   }
 
   return (
