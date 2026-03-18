@@ -67,9 +67,20 @@ function heightScript(id: string) {
 </script>`;
 }
 
-export function VisualWidget({ html }: { html: string }) {
+function cleanHtml(html: string) {
+  return html.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+}
+
+export function VisualWidget({
+  html,
+  streaming,
+}: {
+  html: string;
+  streaming: boolean;
+}) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const id = useId();
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -84,12 +95,30 @@ export function VisualWidget({ html }: { html: string }) {
     return () => window.removeEventListener("message", handleMessage);
   }, [id]);
 
-  const cleanedHtml = html
-    .replace(/\\n/g, "\n")
-    .replace(/\\"/g, '"')
-    .replace(/\\\\/g, "\\");
+  useEffect(() => {
+    if (!streaming) return;
 
-  const srcDoc = `${baseStyles}\n${cleanedHtml}\n${heightScript(id)}`;
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+
+    const cleaned = cleanHtml(html);
+
+    if (!initializedRef.current) {
+      doc.open();
+      doc.write(`${baseStyles}<body>${cleaned}</body>${heightScript(id)}`);
+      doc.close();
+      initializedRef.current = true;
+    } else {
+      doc.body.innerHTML = cleaned;
+    }
+  }, [html, streaming, id]);
+
+  const srcDoc = !streaming
+    ? `${baseStyles}\n${cleanHtml(html)}\n${heightScript(id)}`
+    : undefined;
 
   return (
     <iframe
@@ -101,6 +130,7 @@ export function VisualWidget({ html }: { html: string }) {
         border: "none",
         height: "0px",
         display: "block",
+        transition: "height 0.15s ease-out",
       }}
     />
   );

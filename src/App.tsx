@@ -175,7 +175,7 @@ export default function App() {
                             <ShimmerText text="Creating a visual representation" />
                           </div>
                         ) : (
-                          <VisualWidget html={block.content} />
+                          <VisualWidget html={block.content} streaming={block.isLoading} />
                         )}
                       </>
                     )}
