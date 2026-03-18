@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 
 const baseStyles = `<style>:root {
   --color-bg: oklch(0.274 0.006 286.033);
@@ -56,12 +56,35 @@ body{
 }
 </style>`;
 
-export function VisualWidget({ html, refId }: { html: string; refId: string }) {
+function heightScript(id: string) {
+  return `<script>
+  function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    parent.postMessage({ type: "iframe-height", id: "${id}", height }, "*");
+  }
+  new ResizeObserver(sendHeight).observe(document.body);
+  window.onload = sendHeight;
+</script>`;
+}
+
+function cleanHtml(html: string) {
+  return html.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+}
+
+export function VisualWidget({
+  html,
+  streaming,
+}: {
+  html: string;
+  streaming: boolean;
+}) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const id = useId();
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
-      if (event.data?.type === "iframe-height" && event.data.id === refId) {
+      if (event.data?.type === "iframe-height" && event.data.id === id) {
         if (iframeRef.current) {
           iframeRef.current.style.height = `${event.data.height}px`;
         }
@@ -70,33 +93,49 @@ export function VisualWidget({ html, refId }: { html: string; refId: string }) {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
-  const srcDoc = `
-${baseStyles}
-${html.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\")}
-<script>
-  function sendHeight() {
-    const height = document.documentElement.scrollHeight;
-    parent.postMessage({ type: "iframe-height", id: "${refId}", height }, "*");
-  }
-  new ResizeObserver(sendHeight).observe(document.body);
-  window.onload = sendHeight;
-</script>
-`;
+  useEffect(() => {
+    if (!streaming) return;
+
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+
+    const cleaned = cleanHtml(html);
+
+    if (!initializedRef.current) {
+      doc.open();
+      doc.writeln(`${baseStyles}<body>${cleaned}</body>${heightScript(id)}`);
+      doc.close();
+      initializedRef.current = true;
+    } else {
+      doc.body.innerHTML = cleaned;
+    }
+  }, [html, streaming, id]);
+
+  const srcDoc = !streaming
+    ? `${baseStyles}\n${cleanHtml(html)}\n${heightScript(id)}`
+    : undefined;
 
   return (
-    <iframe
-      ref={iframeRef}
-      srcDoc={srcDoc}
-      sandbox="allow-scripts allow-same-origin"
-      style={{
-        width: "100%",
-        border: "none",
-        height: "0px",
-        display: "block",
-      }}
-    />
+    <div
+      className={`rounded-md p-2 w-full h-full ${streaming ? "shimmer shimmer-bg shimmer-invert shimmer-color-muted shimmer-speed-500 bg-card pointer-events-none" : ""}`}
+    >
+      <iframe
+        ref={iframeRef}
+        srcDoc={srcDoc}
+        sandbox="allow-scripts allow-same-origin"
+        style={{
+          width: "100%",
+          border: "none",
+          height: "0px",
+          display: "block",
+          transition: "height 0.15s ease-out",
+        }}
+      />
+    </div>
   );
 }
