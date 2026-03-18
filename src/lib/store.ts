@@ -22,12 +22,9 @@ type ChatStore = {
   addChatMessage: (query: string) => string;
   appendTextDelta: (id: string, content: string) => void;
   appendWidgetBlock: (messageId: string, refId: string) => void;
+  streamWidgetDelta: (messageId: string, delta: string) => void;
+  finalizeWidgetBlock: (messageId: string) => void;
   updateChatMessage: (id: string, partial: Partial<Message>) => void;
-  updateWidgetBlock: (
-    messageId: string,
-    refId: string,
-    content: string,
-  ) => void;
   pushContext: (...messages: ChatCompletionMessageParam[]) => void;
 };
 
@@ -133,26 +130,45 @@ export const useChatStore = create<ChatStore>((set) => ({
       };
     });
   },
-  updateWidgetBlock: (messageId, refId, content) => {
+  streamWidgetDelta: (messageId, delta) => {
     set((state) => {
       const msg = state.messages[messageId];
       if (!msg) return state;
 
+      const content = [...msg.content];
+      const lastWidget = content.findLastIndex(
+        (item) => item.type === "widget" && item.isLoading,
+      );
+      if (lastWidget === -1) return state;
+
+      content[lastWidget] = {
+        ...content[lastWidget],
+        content: content[lastWidget].content + delta,
+      };
+
       return {
         messages: {
           ...state.messages,
-          [messageId]: {
-            ...msg,
-            content: msg.content.map((item) =>
-              item.type === "widget" && item.refId === refId
-                ? {
-                    ...item,
-                    content,
-                    isLoading: false,
-                  }
-                : item,
-            ),
-          },
+          [messageId]: { ...msg, content },
+        },
+      };
+    });
+  },
+  finalizeWidgetBlock: (messageId) => {
+    set((state) => {
+      const msg = state.messages[messageId];
+      if (!msg) return state;
+
+      const content = msg.content.map((item) =>
+        item.type === "widget" && item.isLoading
+          ? { ...item, isLoading: false }
+          : item,
+      );
+
+      return {
+        messages: {
+          ...state.messages,
+          [messageId]: { ...msg, content },
         },
       };
     });

@@ -169,16 +169,13 @@ export default function App() {
                     )}
                     {block.type === "widget" && (
                       <>
-                        {block.isLoading ? (
+                        {block.content.length === 0 && block.isLoading ? (
                           <div className="w-full h-14 p-4 rounded-xl bg-muted flex items-center gap-2">
                             <Loader className="animate-spin w-5 h-5" />
-                            <ShimmerText text="Creating a visual to make this clearer" />
+                            <ShimmerText text="Creating a visual representation" />
                           </div>
                         ) : (
-                          <VisualWidget
-                            html={block.content}
-                            refId={block.refId || ""}
-                          />
+                          <VisualWidget html={block.content} />
                         )}
                       </>
                     )}

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 
 const baseStyles = `<style>:root {
   --color-bg: oklch(0.274 0.006 286.033);
@@ -56,12 +56,24 @@ body{
 }
 </style>`;
 
-export function VisualWidget({ html, refId }: { html: string; refId: string }) {
+function heightScript(id: string) {
+  return `<script>
+  function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    parent.postMessage({ type: "iframe-height", id: "${id}", height }, "*");
+  }
+  new ResizeObserver(sendHeight).observe(document.body);
+  window.onload = sendHeight;
+</script>`;
+}
+
+export function VisualWidget({ html }: { html: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const id = useId();
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
-      if (event.data?.type === "iframe-height" && event.data.id === refId) {
+      if (event.data?.type === "iframe-height" && event.data.id === id) {
         if (iframeRef.current) {
           iframeRef.current.style.height = `${event.data.height}px`;
         }
@@ -70,21 +82,14 @@ export function VisualWidget({ html, refId }: { html: string; refId: string }) {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
-  const srcDoc = `
-${baseStyles}
-${html.replace(/\\n/g, "\n").replace(/\\"/g, '"').replace(/\\\\/g, "\\")}
-<script>
-  function sendHeight() {
-    const height = document.documentElement.scrollHeight;
-    parent.postMessage({ type: "iframe-height", id: "${refId}", height }, "*");
-  }
-  new ResizeObserver(sendHeight).observe(document.body);
-  window.onload = sendHeight;
-</script>
-`;
+  const cleanedHtml = html
+    .replace(/\\n/g, "\n")
+    .replace(/\\"/g, '"')
+    .replace(/\\\\/g, "\\");
+
+  const srcDoc = `${baseStyles}\n${cleanedHtml}\n${heightScript(id)}`;
 
   return (
     <iframe
