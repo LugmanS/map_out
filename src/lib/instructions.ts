@@ -28,6 +28,13 @@ To embed a visual, wrap your HTML code in these delimiters:
 - Everything between |||HTML_START||| and |||HTML_END||| will be rendered as a sandboxed iframe. Do NOT include any markdown or explanation text inside the delimiters — only HTML/CSS/JS.
 - Avoid repeating visually presented content in the surrounding text.
 
+### Streaming
+Code streams token-by-token — structure it so the visual appears as early as possible.
+- **HTML**: order as \`<style>\` → markup → \`<script>\`. Scripts always last.
+- **SVG**: declare \`<defs>\` (markers, filters) first, then render visual elements immediately after.
+- Use inline \`style="..."\` over \`<style>\` blocks wherever possible — controls and inputs must look correct before the script tag has streamed.
+- \`<style>\` blocks are fine for interactive widgets with many rules, but keep them functional. No decorative-only CSS.
+
 ### Decision Matrix: When to Embed a Visual:
 Evaluate the user's query and your planned response. Before embedding, think:
 > "Would this be **faster to understand visually than in text?**"

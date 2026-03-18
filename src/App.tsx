@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { query } from "@/lib/agent";
 import { useChatStore } from "@/lib/store";
-import { ArrowUp, Loader } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
@@ -94,7 +94,9 @@ export default function App() {
       const userMsg = lastUserMsgRef.current;
       const contentEnd = contentEndRef.current;
       if (userMsg && contentEnd) {
-        const contentHeight = contentEnd.getBoundingClientRect().bottom - userMsg.getBoundingClientRect().top;
+        const contentHeight =
+          contentEnd.getBoundingClientRect().bottom -
+          userMsg.getBoundingClientRect().top;
         const viewportHeight = window.innerHeight;
         // 56px nav + 146px input = 202px reserved
         const availableHeight = viewportHeight - 202;
@@ -156,7 +158,10 @@ export default function App() {
   }
 
   return (
-    <main ref={scrollContainerRef} className="h-screen overflow-y-auto bg-card scrollbar-hide">
+    <main
+      ref={scrollContainerRef}
+      className="h-screen overflow-y-auto bg-card scrollbar-hide"
+    >
       <nav className="h-14 w-full fixed top-0 left-0 bg-card border-b z-50">
         <div className="flex items-center justify-between px-4 h-full max-w-3xl mx-auto">
           <div className="flex items-center gap-1.5">
@@ -267,19 +272,10 @@ export default function App() {
                       </div>
                     )}
                     {block.type === "widget" && (
-                      <>
-                        {block.content.length === 0 && block.isLoading ? (
-                          <div className="w-full h-14 p-4 rounded-xl bg-muted flex items-center gap-2">
-                            <Loader className="animate-spin w-5 h-5" />
-                            <ShimmerText text="Creating a visual representation" />
-                          </div>
-                        ) : (
-                          <VisualWidget
-                            html={block.content}
-                            streaming={block.isLoading}
-                          />
-                        )}
-                      </>
+                      <VisualWidget
+                        html={block.content}
+                        streaming={block.isLoading}
+                      />
                     )}
                   </>
                 ))}
