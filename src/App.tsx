@@ -1,6 +1,9 @@
+import { ModelConfig } from "@/components/model-config";
+import { ShimmerText } from "@/components/shimmer-text";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { VisualWidget } from "@/components/visual-widget";
 import { query } from "@/lib/agent";
 import { useChatStore } from "@/lib/store";
 import { ArrowUp } from "lucide-react";
@@ -9,9 +12,6 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
-import { ModelConfig } from "./components/model-config";
-import { ShimmerText } from "./components/shimmer-text";
-import { VisualWidget } from "./components/visual-widget";
 
 const staterPrompts = [
   "How compound interest works?",
@@ -29,7 +29,6 @@ export default function App() {
   const latestAssistantIdRef = useRef<string | null>(null);
   const [spacerHeight, setSpacerHeight] = useState(0);
 
-  // Scroll just enough to keep the content end visible at the bottom
   const scrollContentIntoView = useCallback(() => {
     const container = scrollContainerRef.current;
     const contentEnd = contentEndRef.current;
@@ -39,7 +38,7 @@ export default function App() {
     const contentEndRect = contentEnd.getBoundingClientRect();
 
     const visibleBottom = containerRect.bottom - 146;
-    // Only scroll if content bottom has gone past the visible area
+
     if (contentEndRect.bottom > visibleBottom) {
       isAutoScrollingRef.current = true;
       const scrollBy = contentEndRect.bottom - visibleBottom;
@@ -50,7 +49,6 @@ export default function App() {
     }
   }, []);
 
-  // Track user scroll to disable auto-scroll per message
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -78,7 +76,6 @@ export default function App() {
     return () => container.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Auto-scroll when messages update (during streaming)
   const messageValues = Object.values(messages);
   const assistants = messageValues.filter((m) => m.role === "assistant");
   const latestAssistant = assistants[assistants.length - 1];
@@ -90,7 +87,6 @@ export default function App() {
       scrollContentIntoView();
     }
     if (!latestAssistant.isLoading && spacerHeight > 0) {
-      // Measure content height from user message to content end
       const userMsg = lastUserMsgRef.current;
       const contentEnd = contentEndRef.current;
       if (userMsg && contentEnd) {
@@ -98,7 +94,6 @@ export default function App() {
           contentEnd.getBoundingClientRect().bottom -
           userMsg.getBoundingClientRect().top;
         const viewportHeight = window.innerHeight;
-        // 56px nav + 146px input = 202px reserved
         const availableHeight = viewportHeight - 202;
         const needed = Math.max(0, availableHeight - contentHeight);
         setSpacerHeight(needed);
@@ -165,9 +160,9 @@ export default function App() {
       <nav className="h-14 w-full fixed top-0 left-0 bg-card border-b z-50">
         <div className="flex items-center justify-between px-4 h-full max-w-3xl mx-auto">
           <div className="flex items-center gap-1.5">
-            <img src="/logo.svg" className="size-8 hover:animate-spin" />
+            <img src="/logo.svg" className="size-8" />
             <div className="-space-y-0.5">
-              <h1 className="font-mono">map_out</h1>
+              <h1 className="font-">Weave</h1>
               <p className="text-xs text-muted-foreground">
                 by{" "}
                 <a
@@ -181,7 +176,10 @@ export default function App() {
             </div>
           </div>
           <div className="flex items-center gap-2.5">
-            <a href="https://github.com/LugmanS/map_out" target="_blank">
+            <a
+              href="https://github.com/lugmanhussainkhan/weave"
+              target="_blank"
+            >
               <Button variant={"outline"}>
                 <svg viewBox="0 0 438.549 438.549">
                   <path
