@@ -54,6 +54,13 @@ body{
   color: var(--color-text-primary);
   font-family: "system-ui", sans-serif;
 }
+
+svg text,
+svg tspan,
+svg textPath {
+  fill: var(--color-text-primary);
+}
+
 </style>`;
 
 function heightScript(id: string) {

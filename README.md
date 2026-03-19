@@ -1,73 +1,49 @@
-# React + TypeScript + Vite
+# map_out
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser-based chat playground for testing the visualization capabilities of different LLMs. Think Claude's artifact/visual feature — but with any model and provider you choose.
 
-Currently, two official plugins are available:
+## What is this?
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+map_out lets you chat with any LLM that exposes an OpenAI-compatible Chat Completions API, and see rich inline visuals — interactive diagrams, charts, animations, and more — rendered directly in the conversation. It's a playground to explore how well different models handle visual reasoning and code generation.
 
-## React Compiler
+**Note**: Your API key is stored in browser local storage and requests go directly from your browser to the provider.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
+1. Visit [**mapout.vercel.app**](https://mapout.vercel.app)
+2. Click the model button (bottom-left of the chat input) to open the configuration dialog
+3. Set your **Base URL** (e.g., `https://api.openai.com/v1`)
+4. Enter your **API Key**
+5. Specify the **Model ID** (e.g., `gpt-4o`, `claude-sonnet-4-20250514`, etc.)
+6. Start chatting!
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## How It Works
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The app sends a system prompt that instructs the model to embed HTML visuals using special delimiters (`|||HTML_START|||` / `|||HTML_END|||`). When the streaming response contains these markers, the content between them is extracted and rendered in a sandboxed iframe — inline with the markdown text response.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Models are encouraged to proactively use visuals when they would enhance understanding, producing diagrams, charts, and interactive widgets as part of their natural response flow.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Local Development
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+)
+- [pnpm](https://pnpm.io/)
+
+### Setup
+
+```bash
+git clone https://github.com/LugmanS/map_out.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+```bash
+cd map_out
+```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+pnpm install
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev
 ```
