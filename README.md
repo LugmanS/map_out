@@ -18,14 +18,14 @@ Weave works with any provider that implements the OpenAI Chat Completions API, s
 
 1. Visit [**weave.madhi.ai**](https://weave.madhi.ai)
 2. Click the model button (bottom-left of the chat input) to open the configuration dialog
-3. Set your **Base URL** (e.g., `https://api.openai.com/v1`)
+3. Set your **Base URL** (e.g., `https://openrouter.ai/api/v1`)
 4. Enter your **API Key**
-5. Specify the **Model ID** (e.g., `gpt-4o`, `claude-sonnet-4-20250514`, etc.)
+5. Specify the **Model ID** (e.g., `anthropic/claude-sonnet-4.6`, `moonshotai/kimi-k2.5`, etc.)
 6. Start chatting!
 
 ## How It Works
 
-The app sends a system prompt that instructs the model to embed HTML visuals using special delimiters (`|||HTML_START|||` / `|||HTML_END|||`). When the streaming response contains these markers, the content between them is extracted and rendered in a sandboxed iframe — inline with the markdown text response.
+The app sends a system prompt that instructs the model to embed HTML visuals using special delimiters (`|||HTML_START|||` / `|||HTML_END|||`). When the streaming response contains these markers, the content between them is extracted and rendered in an iframe — inline with the markdown text response.
 
 Models are encouraged to proactively use visuals when they would enhance understanding, producing diagrams, charts, and interactive widgets as part of their natural response flow.
 
@@ -33,17 +33,17 @@ Models are encouraged to proactively use visuals when they would enhance underst
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18+)
+- [Node.js](https://nodejs.org/) (v22+)
 - [pnpm](https://pnpm.io/)
 
 ### Setup
 
 ```bash
-git clone https://github.com/lugmanhussainkhan/weave.git
+git clone https://github.com/LugmanS/Weave.git
 ```
 
 ```bash
-cd weave
+cd Weave
 ```
 
 ```bash

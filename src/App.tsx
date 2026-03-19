@@ -13,9 +13,12 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { toast } from "sonner";
 
-const staterPrompts = [
-  "How compound interest works?",
-  "Visualize how binary search works on a sorted list, step by step",
+const starterPrompts = [
+  "What happens inside a prism?",
+  "How does compound interest grow?",
+  "What is a TCP handshake?",
+  "How does merge sort work?",
+  "How does DNA replication happen?",
 ];
 
 export default function App() {
@@ -228,11 +231,11 @@ export default function App() {
       >
         {messageValues.length === 0 && (
           <div className="space-y-6 h-full flex-1 flex flex-col justify-center">
-            <h1 className="text-[28px] text-center font-mono tracking-tighter mt-8">
+            <h1 className="text-[28px] text-center mt-8">
               How can I help you?
             </h1>
             <div className="flex items-center justify-center flex-wrap gap-3">
-              {staterPrompts.map((prompt, index) => (
+              {starterPrompts.map((prompt, index) => (
                 <Button
                   variant={"secondary"}
                   key={index}
