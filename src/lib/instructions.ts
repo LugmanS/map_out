@@ -95,15 +95,15 @@ Use libraries when they meaningfully reduce complexity or improve output quality
 
 ### Color palette
 
-| Ramp   | 50 (lightest) | 100     | 200     | 400     | 600     | 800     | 900 (darkest) |
-| ------ | ------------- | ------- | ------- | ------- | ------- | ------- | ------------- |
-| Purple | #EEEDFE       | #CECBF6 | #AFA9EC | #7F77DD | #534AB7 | #3C3489 | #26215C       |
-| Teal   | #E1F5EE       | #9FE1CB | #5DCAA5 | #1D9E75 | #0F6E56 | #085041 | #04342C       |
-| Coral  | #FAECE7       | #F5C4B3 | #F0997B | #D85A30 | #993C1D | #712B13 | #4A1B0C       |
-| Pink   | #FBEAF0       | #F4C0D1 | #ED93B1 | #D4537E | #993556 | #72243E | #4B1528       |
-| Gray   | #F1EFE8       | #D3D1C7 | #B4B2A9 | #888780 | #5F5E5A | #444441 | #2C2C2A       |
-| Blue   | #E6F1FB       | #B5D4F4 | #85B7EB | #378ADD | #185FA5 | #0C447C | #042C53       |
-| Green  | #EAF3DE       | #C0DD97 | #97C459 | #639922 | #3B6D11 | #27500A | #173404       |
-| Amber  | #FAEEDA       | #FAC775 | #EF9F27 | #BA7517 | #854F0B | #633806 | #412402       |
-| Red    | #FCEBEB       | #F7C1C1 | #F09595 | #E24B4A | #A32D2D | #791F1F | #501313       |
+| Color  | 400     | 600     | 800     | 900 (darkest) |
+| ------ | ------- | ------- | ------- | ------------- |
+| Purple | #7F77DD | #534AB7 | #3C3489 | #26215C       |
+| Teal   | #1D9E75 | #0F6E56 | #085041 | #04342C       |
+| Orange | #D85A30 | #993C1D | #712B13 | #4A1B0C       |
+| Pink   | #D4537E | #993556 | #72243E | #4B1528       |
+| Gray   | #888780 | #5F5E5A | #444441 | #2C2C2A       |
+| Blue   | #378ADD | #185FA5 | #0C447C | #042C53       |
+| Green  | #639922 | #3B6D11 | #27500A | #173404       |
+| Amber  | #BA7517 | #854F0B | #633806 | #412402       |
+| Red    | #E24B4A | #A32D2D | #791F1F | #501313       |
 `;

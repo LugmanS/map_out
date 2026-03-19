@@ -69,8 +69,7 @@ export function ModelConfig() {
           <DialogHeader>
             <DialogTitle>Model Configuration</DialogTitle>
             <DialogDescription>
-              Configure your OpenAI Chat Completions compatible LLM provider
-              details.
+              Configure any OpenAI SDK-compatible provider.
             </DialogDescription>
           </DialogHeader>
           <FieldGroup>
@@ -88,7 +87,12 @@ export function ModelConfig() {
                     autoComplete="off"
                   />
                   <FieldDescription>
-                    OpenAI Chat Completions compatible endpoint.
+                    Must be an OpenAI SDK–compatible endpoint with CORS enabled.
+                    If your provider blocks browser requests, use{" "}
+                    <a href="https://openrouter.ai" target="_blank">
+                      OpenRouter
+                    </a>{" "}
+                    or another compatible gateway.
                   </FieldDescription>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
