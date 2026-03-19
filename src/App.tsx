@@ -18,7 +18,7 @@ const starterPrompts = [
   "How does compound interest grow?",
   "What is a TCP handshake?",
   "How does merge sort work?",
-  "How does DNA replication happen?",
+  "How does SONAR in ships work?",
 ];
 
 export default function App() {
